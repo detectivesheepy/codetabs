@@ -1,13 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Sidebar from '../components/Sidebar';
+import EditorArea from '../components/EditorArea';
+import Terminal from '../components/Terminal';
+import StatusBar from '../components/StatusBar';
+import TopBar from '../components/TopBar';
+import { SidebarProvider } from '../contexts/SidebarContext';
+import { EditorProvider } from '../contexts/EditorContext';
 
 const Index = () => {
+  const [terminalVisible, setTerminalVisible] = useState(false);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <SidebarProvider>
+      <EditorProvider>
+        <div className="h-screen bg-[#1e1e1e] text-[#cccccc] flex flex-col overflow-hidden">
+          <TopBar />
+          <div className="flex flex-1 overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <EditorArea />
+              {terminalVisible && (
+                <Terminal onClose={() => setTerminalVisible(false)} />
+              )}
+            </div>
+          </div>
+          <StatusBar onTerminalToggle={() => setTerminalVisible(!terminalVisible)} />
+        </div>
+      </EditorProvider>
+    </SidebarProvider>
   );
 };
 
