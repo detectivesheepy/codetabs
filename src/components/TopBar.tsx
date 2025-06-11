@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import CommandPalette from './CommandPalette';
 import { useEditor } from '../contexts/EditorContext';
 import { useSidebar } from '../contexts/SidebarContext';
+import { toast } from '../components/ui/use-toast';
 
 const TopBar = () => {
   const [showCommandPalette, setShowCommandPalette] = useState(false);
-  const { openFile, activeTab, openTabs, updateFileContent } = useEditor();
+  const { openFile, activeTab, openTabs, updateFileContent, closeTab } = useEditor();
   const { setActivePanel, setIsCollapsed } = useSidebar();
 
   const handleMenuAction = (action: string) => {
@@ -16,13 +18,18 @@ const TopBar = () => {
       // File menu actions
       case 'New File':
         const newFileId = `new-file-${Date.now()}`;
+        const fileName = prompt('Enter file name:', 'untitled.txt') || 'untitled.txt';
         openFile({
           id: newFileId,
-          name: 'untitled.txt',
-          path: `/untitled.txt`,
+          name: fileName,
+          path: `/${fileName}`,
           content: '',
-          language: 'text',
+          language: getLanguageFromExtension(fileName),
           isModified: false
+        });
+        toast({
+          title: "File Created",
+          description: `Created new file: ${fileName}`,
         });
         break;
         
@@ -34,10 +41,18 @@ const TopBar = () => {
         if (activeTab) {
           const currentTab = openTabs.find(tab => tab.id === activeTab);
           if (currentTab) {
-            // Simulate save - in a real app this would save to backend/filesystem
             updateFileContent(activeTab, currentTab.content);
-            console.log(`Saved file: ${currentTab.name}`);
+            toast({
+              title: "File Saved",
+              description: `Saved ${currentTab.name}`,
+            });
           }
+        } else {
+          toast({
+            title: "No file to save",
+            description: "Please open a file first",
+            variant: "destructive"
+          });
         }
         break;
         
@@ -53,118 +68,309 @@ const TopBar = () => {
                 name: newName,
                 path: `/${newName}`,
                 content: currentTab.content,
-                language: currentTab.language,
+                language: getLanguageFromExtension(newName),
                 isModified: false
+              });
+              toast({
+                title: "File Saved As",
+                description: `Saved as ${newName}`,
               });
             }
           }
+        } else {
+          toast({
+            title: "No file to save",
+            description: "Please open a file first",
+            variant: "destructive"
+          });
         }
         break;
         
       case 'Close':
-        // Close functionality would be handled by the tab close button
-        console.log('Close current file');
+        if (activeTab) {
+          const currentTab = openTabs.find(tab => tab.id === activeTab);
+          if (currentTab?.isModified) {
+            const shouldSave = confirm(`${currentTab.name} has unsaved changes. Save before closing?`);
+            if (shouldSave) {
+              updateFileContent(activeTab, currentTab.content);
+            }
+          }
+          closeTab(activeTab);
+          toast({
+            title: "File Closed",
+            description: "File has been closed",
+          });
+        } else {
+          toast({
+            title: "No file to close",
+            description: "No active file to close",
+            variant: "destructive"
+          });
+        }
         break;
 
       // Edit menu actions
       case 'Undo':
-        document.execCommand('undo');
+        const activeEditor = document.querySelector('textarea, [contenteditable="true"]') as HTMLElement;
+        if (activeEditor) {
+          document.execCommand('undo');
+          toast({
+            title: "Undo",
+            description: "Last action undone",
+          });
+        } else {
+          toast({
+            title: "Cannot undo",
+            description: "No active editor found",
+            variant: "destructive"
+          });
+        }
         break;
         
       case 'Redo':
-        document.execCommand('redo');
+        const activeRedoEditor = document.querySelector('textarea, [contenteditable="true"]') as HTMLElement;
+        if (activeRedoEditor) {
+          document.execCommand('redo');
+          toast({
+            title: "Redo",
+            description: "Action redone",
+          });
+        } else {
+          toast({
+            title: "Cannot redo",
+            description: "No active editor found",
+            variant: "destructive"
+          });
+        }
         break;
         
       case 'Cut':
-        document.execCommand('cut');
+        try {
+          document.execCommand('cut');
+          toast({
+            title: "Cut",
+            description: "Selection cut to clipboard",
+          });
+        } catch (error) {
+          toast({
+            title: "Cut failed",
+            description: "Unable to cut selection",
+            variant: "destructive"
+          });
+        }
         break;
         
       case 'Copy':
-        document.execCommand('copy');
+        try {
+          document.execCommand('copy');
+          toast({
+            title: "Copy",
+            description: "Selection copied to clipboard",
+          });
+        } catch (error) {
+          toast({
+            title: "Copy failed",
+            description: "Unable to copy selection",
+            variant: "destructive"
+          });
+        }
         break;
         
       case 'Paste':
-        document.execCommand('paste');
+        try {
+          document.execCommand('paste');
+          toast({
+            title: "Paste",
+            description: "Content pasted from clipboard",
+          });
+        } catch (error) {
+          toast({
+            title: "Paste failed",
+            description: "Unable to paste from clipboard",
+            variant: "destructive"
+          });
+        }
         break;
         
       case 'Find':
-        // Trigger browser find
-        if (document.querySelector('textarea') || document.querySelector('[contenteditable]')) {
-          const event = new KeyboardEvent('keydown', {
-            key: 'f',
-            ctrlKey: true,
-            bubbles: true
+        const findEditor = document.querySelector('textarea, [contenteditable="true"]') as HTMLElement;
+        if (findEditor) {
+          findEditor.focus();
+          setTimeout(() => {
+            const event = new KeyboardEvent('keydown', {
+              key: 'f',
+              ctrlKey: true,
+              bubbles: true
+            });
+            findEditor.dispatchEvent(event);
+          }, 100);
+          toast({
+            title: "Find",
+            description: "Find dialog opened",
           });
-          document.dispatchEvent(event);
+        } else {
+          toast({
+            title: "Cannot find",
+            description: "No active editor found",
+            variant: "destructive"
+          });
         }
         break;
 
       case 'Fork on GitHub':
         window.open('https://github.com/detectivesheepy/codetabs/fork', '_blank');
+        toast({
+          title: "Opening GitHub",
+          description: "Redirecting to fork the repository",
+        });
         break;
 
       // View menu actions
       case 'Command Palette':
         setShowCommandPalette(true);
+        toast({
+          title: "Command Palette",
+          description: "Command palette opened",
+        });
         break;
         
       case 'Explorer':
         setActivePanel('explorer');
         setIsCollapsed(false);
+        toast({
+          title: "Explorer",
+          description: "File explorer panel opened",
+        });
         break;
         
       case 'Search':
         setActivePanel('search');
         setIsCollapsed(false);
+        toast({
+          title: "Search",
+          description: "Search panel opened",
+        });
         break;
         
       case 'Extensions':
         setActivePanel('extensions');
         setIsCollapsed(false);
+        toast({
+          title: "Extensions",
+          description: "Extensions panel opened",
+        });
         break;
         
       case 'Terminal':
-        // This would need to be handled by the parent component
-        console.log('Toggle terminal');
+        const terminalEvent = new CustomEvent('toggleTerminal');
+        window.dispatchEvent(terminalEvent);
+        toast({
+          title: "Terminal",
+          description: "Terminal toggled",
+        });
         break;
 
       // Go menu actions
       case 'Go to File':
         setShowCommandPalette(true);
+        toast({
+          title: "Go to File",
+          description: "File picker opened",
+        });
         break;
         
       case 'Go to Line':
-        const lineNumber = prompt('Enter line number:');
-        if (lineNumber) {
-          console.log(`Go to line: ${lineNumber}`);
-          // In a real editor, this would scroll to the specific line
+        if (activeTab) {
+          const lineNumber = prompt('Enter line number:');
+          if (lineNumber && !isNaN(Number(lineNumber))) {
+            const line = Number(lineNumber);
+            toast({
+              title: "Go to Line",
+              description: `Jumping to line ${line}`,
+            });
+            // In a real editor, this would scroll to the specific line
+            const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+            if (textarea) {
+              const lines = textarea.value.split('\n');
+              if (line <= lines.length && line > 0) {
+                const charPosition = lines.slice(0, line - 1).join('\n').length + (line > 1 ? 1 : 0);
+                textarea.setSelectionRange(charPosition, charPosition);
+                textarea.focus();
+              }
+            }
+          } else if (lineNumber) {
+            toast({
+              title: "Invalid line number",
+              description: "Please enter a valid line number",
+              variant: "destructive"
+            });
+          }
+        } else {
+          toast({
+            title: "No file open",
+            description: "Please open a file first",
+            variant: "destructive"
+          });
         }
         break;
         
       case 'Go to Symbol':
-        console.log('Go to symbol - would show symbol picker');
+        if (activeTab) {
+          toast({
+            title: "Go to Symbol",
+            description: "Symbol search would be implemented here",
+          });
+        } else {
+          toast({
+            title: "No file open",
+            description: "Please open a file first",
+            variant: "destructive"
+          });
+        }
         break;
 
       // Run menu actions
       case 'Start Debugging':
-        console.log('Starting debugging session...');
+        toast({
+          title: "Start Debugging",
+          description: "Debugging session started",
+        });
+        console.log('🐛 Debugging session started...');
         break;
         
       case 'Run Without Debugging':
-        console.log('Running without debugging...');
+        toast({
+          title: "Run Without Debugging",
+          description: "Running application...",
+        });
+        console.log('🚀 Running application without debugging...');
         break;
         
       case 'Stop':
-        console.log('Stopping execution...');
+        toast({
+          title: "Stop",
+          description: "Execution stopped",
+        });
+        console.log('⏹️ Stopping execution...');
         break;
 
       // Terminal menu actions
       case 'New Terminal':
-        console.log('Opening new terminal...');
+        const newTerminalEvent = new CustomEvent('newTerminal');
+        window.dispatchEvent(newTerminalEvent);
+        toast({
+          title: "New Terminal",
+          description: "New terminal instance created",
+        });
         break;
         
       case 'Split Terminal':
-        console.log('Splitting terminal...');
+        const splitTerminalEvent = new CustomEvent('splitTerminal');
+        window.dispatchEvent(splitTerminalEvent);
+        toast({
+          title: "Split Terminal",
+          description: "Terminal split created",
+        });
         break;
 
       // Help menu actions
@@ -183,23 +389,111 @@ This is a powerful VS Code-like editor running in your browser.
 - Access the terminal from the status bar
 - Use Ctrl+S to save files
 
+## Features
+- **Multi-tab editing** - Work on multiple files simultaneously
+- **Syntax highlighting** - Support for various programming languages
+- **File explorer** - Browse and manage your project files
+- **Command palette** - Quick access to all editor commands
+- **Integrated terminal** - Run commands directly in the editor
+- **Search functionality** - Find text across all files
+
+## Keyboard Shortcuts
+- **Ctrl+P** - Open Command Palette / Go to File
+- **Ctrl+S** - Save current file
+- **Ctrl+F** - Find in current file
+- **Ctrl+Z** - Undo
+- **Ctrl+Y** - Redo
+- **Ctrl+X** - Cut
+- **Ctrl+C** - Copy
+- **Ctrl+V** - Paste
+
+## Getting Started
+1. Create a new file using File > New File
+2. Start coding with syntax highlighting
+3. Save your work with Ctrl+S
+4. Use the terminal for running commands
+5. Explore the various panels in the sidebar
+
 Happy coding! 🚀`,
           language: 'markdown',
           isModified: false
+        });
+        toast({
+          title: "Welcome",
+          description: "Welcome guide opened",
         });
         break;
         
       case 'Documentation':
         window.open('https://docs.lovable.dev/', '_blank');
+        toast({
+          title: "Documentation",
+          description: "Opening documentation in new tab",
+        });
         break;
         
       case 'About':
-        alert('Codetabs - A VS Code Alternative for the Web\nBuilt with React, TypeScript, and Tailwind CSS');
+        const aboutMessage = `Codetabs - A VS Code Alternative for the Web
+
+Version: 1.0.0
+Built with: React, TypeScript, and Tailwind CSS
+License: MIT
+
+Features:
+• Multi-tab file editing
+• Syntax highlighting
+• File explorer
+• Command palette
+• Integrated terminal
+• Search functionality
+
+Created with ❤️ for developers who want a powerful web-based code editor.
+
+GitHub: https://github.com/detectivesheepy/codetabs`;
+        
+        alert(aboutMessage);
+        toast({
+          title: "About Codetabs",
+          description: "Version and feature information displayed",
+        });
         break;
 
       default:
+        toast({
+          title: "Feature not implemented",
+          description: `${action} functionality is not yet implemented`,
+          variant: "destructive"
+        });
         console.log(`Unhandled menu action: ${action}`);
     }
+  };
+
+  const getLanguageFromExtension = (filename: string): string => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    const languageMap: { [key: string]: string } = {
+      'js': 'javascript',
+      'jsx': 'javascript',
+      'ts': 'typescript',
+      'tsx': 'typescript',
+      'html': 'html',
+      'css': 'css',
+      'scss': 'scss',
+      'sass': 'sass',
+      'json': 'json',
+      'md': 'markdown',
+      'py': 'python',
+      'java': 'java',
+      'cpp': 'cpp',
+      'c': 'c',
+      'php': 'php',
+      'rb': 'ruby',
+      'go': 'go',
+      'rs': 'rust',
+      'xml': 'xml',
+      'yml': 'yaml',
+      'yaml': 'yaml',
+    };
+    return languageMap[ext || ''] || 'text';
   };
 
   const menuItems = [

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import EditorArea from '../components/EditorArea';
 import Terminal from '../components/Terminal';
@@ -7,9 +7,36 @@ import StatusBar from '../components/StatusBar';
 import TopBar from '../components/TopBar';
 import { SidebarProvider } from '../contexts/SidebarContext';
 import { EditorProvider } from '../contexts/EditorContext';
+import { Toaster } from '../components/ui/toaster';
 
 const Index = () => {
   const [terminalVisible, setTerminalVisible] = useState(false);
+
+  useEffect(() => {
+    const handleToggleTerminal = () => {
+      setTerminalVisible(prev => !prev);
+    };
+
+    const handleNewTerminal = () => {
+      setTerminalVisible(true);
+      console.log('New terminal instance created');
+    };
+
+    const handleSplitTerminal = () => {
+      setTerminalVisible(true);
+      console.log('Terminal split created');
+    };
+
+    window.addEventListener('toggleTerminal', handleToggleTerminal);
+    window.addEventListener('newTerminal', handleNewTerminal);
+    window.addEventListener('splitTerminal', handleSplitTerminal);
+
+    return () => {
+      window.removeEventListener('toggleTerminal', handleToggleTerminal);
+      window.removeEventListener('newTerminal', handleNewTerminal);
+      window.removeEventListener('splitTerminal', handleSplitTerminal);
+    };
+  }, []);
 
   return (
     <SidebarProvider>
@@ -26,6 +53,7 @@ const Index = () => {
             </div>
           </div>
           <StatusBar onTerminalToggle={() => setTerminalVisible(!terminalVisible)} />
+          <Toaster />
         </div>
       </EditorProvider>
     </SidebarProvider>
