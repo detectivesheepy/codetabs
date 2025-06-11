@@ -2,9 +2,202 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import CommandPalette from './CommandPalette';
+import { useEditor } from '../contexts/EditorContext';
+import { useSidebar } from '../contexts/SidebarContext';
 
 const TopBar = () => {
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const { openFile, activeTab, openTabs, updateFileContent } = useEditor();
+  const { setActivePanel, setIsCollapsed } = useSidebar();
+
+  const handleMenuAction = (action: string) => {
+    console.log(`Menu action: ${action}`);
+    
+    switch (action) {
+      // File menu actions
+      case 'New File':
+        const newFileId = `new-file-${Date.now()}`;
+        openFile({
+          id: newFileId,
+          name: 'untitled.txt',
+          path: `/untitled.txt`,
+          content: '',
+          language: 'text',
+          isModified: false
+        });
+        break;
+        
+      case 'Open File':
+        setShowCommandPalette(true);
+        break;
+        
+      case 'Save':
+        if (activeTab) {
+          const currentTab = openTabs.find(tab => tab.id === activeTab);
+          if (currentTab) {
+            // Simulate save - in a real app this would save to backend/filesystem
+            updateFileContent(activeTab, currentTab.content);
+            console.log(`Saved file: ${currentTab.name}`);
+          }
+        }
+        break;
+        
+      case 'Save As':
+        if (activeTab) {
+          const currentTab = openTabs.find(tab => tab.id === activeTab);
+          if (currentTab) {
+            const newName = prompt('Enter new filename:', currentTab.name);
+            if (newName) {
+              const newFileId = `save-as-${Date.now()}`;
+              openFile({
+                id: newFileId,
+                name: newName,
+                path: `/${newName}`,
+                content: currentTab.content,
+                language: currentTab.language,
+                isModified: false
+              });
+            }
+          }
+        }
+        break;
+        
+      case 'Close':
+        // Close functionality would be handled by the tab close button
+        console.log('Close current file');
+        break;
+
+      // Edit menu actions
+      case 'Undo':
+        document.execCommand('undo');
+        break;
+        
+      case 'Redo':
+        document.execCommand('redo');
+        break;
+        
+      case 'Cut':
+        document.execCommand('cut');
+        break;
+        
+      case 'Copy':
+        document.execCommand('copy');
+        break;
+        
+      case 'Paste':
+        document.execCommand('paste');
+        break;
+        
+      case 'Find':
+        // Trigger browser find
+        if (document.querySelector('textarea') || document.querySelector('[contenteditable]')) {
+          const event = new KeyboardEvent('keydown', {
+            key: 'f',
+            ctrlKey: true,
+            bubbles: true
+          });
+          document.dispatchEvent(event);
+        }
+        break;
+
+      // View menu actions
+      case 'Command Palette':
+        setShowCommandPalette(true);
+        break;
+        
+      case 'Explorer':
+        setActivePanel('explorer');
+        setIsCollapsed(false);
+        break;
+        
+      case 'Search':
+        setActivePanel('search');
+        setIsCollapsed(false);
+        break;
+        
+      case 'Extensions':
+        setActivePanel('extensions');
+        setIsCollapsed(false);
+        break;
+        
+      case 'Terminal':
+        // This would need to be handled by the parent component
+        console.log('Toggle terminal');
+        break;
+
+      // Go menu actions
+      case 'Go to File':
+        setShowCommandPalette(true);
+        break;
+        
+      case 'Go to Line':
+        const lineNumber = prompt('Enter line number:');
+        if (lineNumber) {
+          console.log(`Go to line: ${lineNumber}`);
+          // In a real editor, this would scroll to the specific line
+        }
+        break;
+        
+      case 'Go to Symbol':
+        console.log('Go to symbol - would show symbol picker');
+        break;
+
+      // Run menu actions
+      case 'Start Debugging':
+        console.log('Starting debugging session...');
+        break;
+        
+      case 'Run Without Debugging':
+        console.log('Running without debugging...');
+        break;
+        
+      case 'Stop':
+        console.log('Stopping execution...');
+        break;
+
+      // Terminal menu actions
+      case 'New Terminal':
+        console.log('Opening new terminal...');
+        break;
+        
+      case 'Split Terminal':
+        console.log('Splitting terminal...');
+        break;
+
+      // Help menu actions
+      case 'Welcome':
+        openFile({
+          id: 'welcome',
+          name: 'Welcome.md',
+          path: '/Welcome.md',
+          content: `# Welcome to Codetabs!
+
+This is a powerful VS Code-like editor running in your browser.
+
+## Quick Start
+- Use the Explorer panel to manage files
+- Open the Command Palette with Ctrl+P
+- Access the terminal from the status bar
+- Use Ctrl+S to save files
+
+Happy coding! 🚀`,
+          language: 'markdown',
+          isModified: false
+        });
+        break;
+        
+      case 'Documentation':
+        window.open('https://docs.lovable.dev/', '_blank');
+        break;
+        
+      case 'About':
+        alert('Codetabs - A VS Code Alternative for the Web\nBuilt with React, TypeScript, and Tailwind CSS');
+        break;
+
+      default:
+        console.log(`Unhandled menu action: ${action}`);
+    }
+  };
 
   const menuItems = [
     { label: 'File', items: ['New File', 'Open File', 'Save', 'Save As', 'Close'] },
@@ -32,11 +225,7 @@ const TopBar = () => {
                     <button
                       key={item}
                       className="block w-full text-left px-3 py-2 text-sm hover:bg-[#2a2d2e] first:rounded-t last:rounded-b"
-                      onClick={() => {
-                        if (item === 'Command Palette') {
-                          setShowCommandPalette(true);
-                        }
-                      }}
+                      onClick={() => handleMenuAction(item)}
                     >
                       {item}
                     </button>
