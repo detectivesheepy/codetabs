@@ -1,73 +1,56 @@
-# Welcome to your Lovable project
+# Codetabs
+A Visual Studio Code alternative for the web, with all the same features and capabilities.
+## Getting Started
 
-## Project info
+### File Management
+- **Explorer Panel**: Click the folder icon in the activity bar (left sidebar) to view and manage your files
+- **Create New Files**: Click the + button in the Files panel to add new files
+- **Open Files**: Click on any file in the explorer to open it in the editor
 
-**URL**: https://lovable.dev/projects/7dbc3fae-9194-46a5-9637-7476776a1735
+### Editor Features
+- **Tabs**: Open multiple files simultaneously with tab support
+- **Syntax Highlighting**: Automatic syntax highlighting for various file types
+- **Auto-completion**: Smart code completion while you type
 
-## How can I edit this code?
+### Navigation
+- **Activity Bar**: The leftmost panel with icons for Explorer, Search, Extensions, and Settings
+- **Sidebar**: Main content area that shows different panels based on your selection
+- **Editor Area**: Central area where you write your code with tab support
+- **Terminal**: Access the integrated terminal via the status bar button
 
-There are several ways of editing your application.
+### Search & Replace
+- **Global Search**: Use the search panel (magnifying glass icon) to find text across all files
+- **Find in File**: Use Ctrl+F (Cmd+F on Mac) to search within the current file
 
-**Use Lovable**
+### Keyboard Shortcuts
+- **Ctrl+P** (Cmd+P): Quick file open
+- **Ctrl+S** (Cmd+S): Save file
+- **Ctrl+F** (Cmd+F): Find in current file
+- **Ctrl+Shift+P** (Cmd+Shift+P): Open command palette
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7dbc3fae-9194-46a5-9637-7476776a1735) and start prompting.
+### Terminal
+- Click the Terminal button in the status bar to toggle the integrated terminal
+- Run commands, build your project, or manage dependencies
 
-Changes made via Lovable will be committed automatically to this repo.
+### Extensions (Coming Soon)
+- Browse and install extensions to enhance your coding experience
+- Language support, themes, and productivity tools
 
-**Use your preferred IDE**
+## Tips for Productive Coding
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Use the Command Palette**: Quick access to all editor commands
+2. **Master Keyboard Shortcuts**: Speed up your workflow significantly
+3. **Organize with Folders**: Keep your project structure clean and logical
+4. **Use Multiple Tabs**: Work on several files simultaneously
+5. **Leverage Search**: Quickly find and replace across your entire project
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## File Types Supported
 
-Follow these steps:
+Codetabs supports syntax highlighting and features for:
+- HTML, CSS, JavaScript
+- TypeScript, JSX, TSX
+- JSON, XML, YAML
+- Markdown
+- And many more!
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7dbc3fae-9194-46a5-9637-7476776a1735) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Happy coding! 🚀
