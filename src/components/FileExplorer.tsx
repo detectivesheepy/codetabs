@@ -164,19 +164,19 @@ Happy coding!`
           {node.type === 'folder' && (
             <>
               {isExpanded ? (
-                <chevron-down className="w-3 h-3 mr-1 text-[#cccccc]" />
+                <ChevronDown className="w-3 h-3 mr-1 text-[#cccccc]" />
               ) : (
-                <chevron-right className="w-3 h-3 mr-1 text-[#cccccc]" />
+                <ChevronRight className="w-3 h-3 mr-1 text-[#cccccc]" />
               )}
               {isExpanded ? (
-                <folder-open className="w-4 h-4 mr-2 text-[#dcb67a]" />
+                <FolderOpen className="w-4 h-4 mr-2 text-[#dcb67a]" />
               ) : (
-                <folder className="w-4 h-4 mr-2 text-[#dcb67a]" />
+                <Folder className="w-4 h-4 mr-2 text-[#dcb67a]" />
               )}
             </>
           )}
           {node.type === 'file' && (
-            <file-text className="w-4 h-4 mr-2 text-[#cccccc] ml-4" />
+            <FileText className="w-4 h-4 mr-2 text-[#cccccc] ml-4" />
           )}
           <span className="text-[#cccccc]">{node.name}</span>
         </div>
@@ -195,7 +195,7 @@ Happy coding!`
       <div className="flex items-center justify-between p-2">
         <span className="text-xs text-[#cccccc] uppercase tracking-wide">Files</span>
         <button className="p-1 hover:bg-[#3e3e42] rounded" title="New File">
-          <plus className="w-4 h-4 text-[#cccccc]" />
+          <Plus className="w-4 h-4 text-[#cccccc]" />
         </button>
       </div>
       

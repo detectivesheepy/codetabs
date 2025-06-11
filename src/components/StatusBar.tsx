@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { terminal } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 
 interface StatusBarProps {
   onTerminalToggle: () => void;
@@ -34,7 +34,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ onTerminalToggle }) => {
           onClick={onTerminalToggle}
           className="flex items-center space-x-1 px-2 py-1 hover:bg-[#005a9e] rounded"
         >
-          <terminal className="w-3 h-3" />
+          <Terminal className="w-3 h-3" />
           <span>Terminal</span>
         </button>
         
