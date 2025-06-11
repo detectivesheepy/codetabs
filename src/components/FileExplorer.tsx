@@ -21,32 +21,11 @@ interface FileNode {
 
 const FileExplorer = () => {
   const { openFile } = useEditor();
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['root', 'src']));
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['root']));
 
   const fileStructure: FileNode[] = [
-    {
-      id: 'src',
-      name: 'src',
-      type: 'folder',
-      path: '/src',
-      children: [
-        {
-          id: 'components',
-          name: 'components',
-          type: 'folder',
-          path: '/src/components',
-          children: [
-            { id: 'app', name: 'App.tsx', type: 'file', path: '/src/components/App.tsx', language: 'typescript' },
-            { id: 'header', name: 'Header.tsx', type: 'file', path: '/src/components/Header.tsx', language: 'typescript' }
-          ]
-        },
-        { id: 'index', name: 'index.tsx', type: 'file', path: '/src/index.tsx', language: 'typescript' },
-        { id: 'styles', name: 'styles.css', type: 'file', path: '/src/styles.css', language: 'css' }
-      ]
-    },
-    { id: 'package', name: 'package.json', type: 'file', path: '/package.json', language: 'json' },
-    { id: 'readme', name: 'README.md', type: 'file', path: '/README.md', language: 'markdown' },
-    { id: 'tsconfig', name: 'tsconfig.json', type: 'file', path: '/tsconfig.json', language: 'json' }
+    { id: 'index', name: 'index.html', type: 'file', path: '/index.html', language: 'html' },
+    { id: 'readme', name: 'README.md', type: 'file', path: '/README.md', language: 'markdown' }
   ];
 
   const toggleFolder = (folderId: string) => {
@@ -76,70 +55,75 @@ const FileExplorer = () => {
 
   const getFileContent = (fileName: string): string => {
     const samples = {
-      'App.tsx': `import React from 'react';
-import Header from './Header';
+      'index.html': `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codetabs Starter Project</title>
+</head>
+<body>
+    <h1>Codetabs Starter Project</h1>
+</body>
+</html>`,
+      'README.md': `# Codetabs Starter Project
 
-const App: React.FC = () => {
-  return (
-    <div className="app">
-      <Header />
-      <main>
-        <h1>Welcome to Codetabs!</h1>
-        <p>Start building amazing applications.</p>
-      </main>
-    </div>
-  );
-};
-
-export default App;`,
-      'Header.tsx': `import React from 'react';
-
-const Header: React.FC = () => {
-  return (
-    <header className="header">
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-      </nav>
-    </header>
-  );
-};
-
-export default Header;`,
-      'package.json': `{
-  "name": "codetabs-project",
-  "version": "1.0.0",
-  "description": "A sample project for Codetabs",
-  "main": "index.js",
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  }
-}`,
-      'README.md': `# Codetabs Project
-
-This is a sample project created with Codetabs.
+Welcome to your new Codetabs project! This editor gives you a powerful VS Code-like experience right in your browser.
 
 ## Getting Started
 
-1. Install dependencies: \`npm install\`
-2. Start the development server: \`npm start\`
-3. Open your browser and visit \`http://localhost:3000\`
+### File Management
+- **Explorer Panel**: Click the folder icon in the activity bar (left sidebar) to view and manage your files
+- **Create New Files**: Click the + button in the Files panel to add new files
+- **Open Files**: Click on any file in the explorer to open it in the editor
 
-## Features
+### Editor Features
+- **Tabs**: Open multiple files simultaneously with tab support
+- **Syntax Highlighting**: Automatic syntax highlighting for various file types
+- **Auto-completion**: Smart code completion while you type
 
-- Modern React development
-- TypeScript support
-- Live reload
-- Syntax highlighting
+### Navigation
+- **Activity Bar**: The leftmost panel with icons for Explorer, Search, Extensions, and Settings
+- **Sidebar**: Main content area that shows different panels based on your selection
+- **Editor Area**: Central area where you write your code with tab support
+- **Terminal**: Access the integrated terminal via the status bar button
 
-Happy coding!`
+### Search & Replace
+- **Global Search**: Use the search panel (magnifying glass icon) to find text across all files
+- **Find in File**: Use Ctrl+F (Cmd+F on Mac) to search within the current file
+
+### Keyboard Shortcuts
+- **Ctrl+P** (Cmd+P): Quick file open
+- **Ctrl+S** (Cmd+S): Save file
+- **Ctrl+F** (Cmd+F): Find in current file
+- **Ctrl+Shift+P** (Cmd+Shift+P): Open command palette
+
+### Terminal
+- Click the Terminal button in the status bar to toggle the integrated terminal
+- Run commands, build your project, or manage dependencies
+
+### Extensions (Coming Soon)
+- Browse and install extensions to enhance your coding experience
+- Language support, themes, and productivity tools
+
+## Tips for Productive Coding
+
+1. **Use the Command Palette**: Quick access to all editor commands
+2. **Master Keyboard Shortcuts**: Speed up your workflow significantly
+3. **Organize with Folders**: Keep your project structure clean and logical
+4. **Use Multiple Tabs**: Work on several files simultaneously
+5. **Leverage Search**: Quickly find and replace across your entire project
+
+## File Types Supported
+
+Codetabs supports syntax highlighting and features for:
+- HTML, CSS, JavaScript
+- TypeScript, JSX, TSX
+- JSON, XML, YAML
+- Markdown
+- And many more!
+
+Happy coding! 🚀`
     };
     return samples[fileName as keyof typeof samples] || `// Content for ${fileName}`;
   };
