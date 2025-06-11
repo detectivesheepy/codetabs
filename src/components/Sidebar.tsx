@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { 
-  folder, 
-  search, 
-  settings,
-  file-text,
-  layout-grid
+  Folder, 
+  Search, 
+  Settings,
+  FileText,
+  LayoutGrid
 } from 'lucide-react';
 import { useSidebar } from '../contexts/SidebarContext';
 import FileExplorer from './FileExplorer';
@@ -16,10 +16,10 @@ const Sidebar = () => {
   const { activePanel, setActivePanel, isCollapsed } = useSidebar();
 
   const sidebarItems = [
-    { id: 'explorer', icon: folder, label: 'Explorer' },
-    { id: 'search', icon: search, label: 'Search' },
-    { id: 'extensions', icon: layout-grid, label: 'Extensions' },
-    { id: 'settings', icon: settings, label: 'Settings' },
+    { id: 'explorer', icon: Folder, label: 'Explorer' },
+    { id: 'search', icon: Search, label: 'Search' },
+    { id: 'extensions', icon: LayoutGrid, label: 'Extensions' },
+    { id: 'settings', icon: Settings, label: 'Settings' },
   ];
 
   const renderPanel = () => {

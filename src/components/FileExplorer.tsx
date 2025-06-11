@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { 
-  folder, 
-  folder-open, 
-  file-text,
-  chevron-right,
-  chevron-down,
-  plus
+  Folder, 
+  FolderOpen, 
+  FileText,
+  ChevronRight,
+  ChevronDown,
+  Plus
 } from 'lucide-react';
 import { useEditor } from '../contexts/EditorContext';
 
