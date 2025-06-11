@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import CommandPalette from './CommandPalette';
@@ -98,6 +97,10 @@ const TopBar = () => {
           });
           document.dispatchEvent(event);
         }
+        break;
+
+      case 'Fork on GitHub':
+        window.open('https://github.com/detectivesheepy/codetabs/fork', '_blank');
         break;
 
       // View menu actions
@@ -201,7 +204,7 @@ Happy coding! 🚀`,
 
   const menuItems = [
     { label: 'File', items: ['New File', 'Open File', 'Save', 'Save As', 'Close'] },
-    { label: 'Edit', items: ['Undo', 'Redo', 'Cut', 'Copy', 'Paste', 'Find'] },
+    { label: 'Edit', items: ['Undo', 'Redo', 'Cut', 'Copy', 'Paste', 'Find', 'Fork on GitHub'] },
     { label: 'View', items: ['Command Palette', 'Explorer', 'Search', 'Extensions', 'Terminal'] },
     { label: 'Go', items: ['Go to File', 'Go to Line', 'Go to Symbol'] },
     { label: 'Run', items: ['Start Debugging', 'Run Without Debugging', 'Stop'] },
